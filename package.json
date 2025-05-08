@@ -2,7 +2,6 @@
   "name": "7702-eoa-implementation",
   "version": "1.0.0",
   "main": "index.js",
-  "author": "lv.min <lv.min@okg.com>",
   "license": "GPL-3.0",
   "scripts": {
     "prettier:sol": "prettier --write --plugin=prettier-plugin-solidity 'src/**/*.sol' 'test/**/*.sol'",
