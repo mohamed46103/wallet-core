@@ -45,6 +45,11 @@ contract DeployInit is Script {
         console.log("WalletCore address: %s", walletCore_);
         console.log("Storage address: %s", storage_);
         console.log("ECDSAValidator address: %s", ecdsaValidator_);
+
+        // Initialize the wallet core
+        WalletCore(payable(walletCore_)).initialize();
+        console.log("WalletCore initialized");
+
         console.log("Completed DeployInit script");
         vm.stopBroadcast();
     }
