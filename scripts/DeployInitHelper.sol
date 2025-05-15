@@ -9,53 +9,49 @@ import "lib/forge-std/src/Test.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 
 library DeployInitHelper {
-    function deployWalletCore(
+    function deployContracts(
         DeployFactory deployFactory,
         bytes32 deployFactorySalt,
         string memory walletCoreName,
-        string memory walletCoreVersion,
-        address storageAddr
-    ) public returns (address payable) {
-        return
-            _deployIfNeeded(
-                deployFactory,
-                abi.encodePacked(
-                    type(WalletCore).creationCode,
-                    abi.encode(storageAddr, walletCoreName, walletCoreVersion) // constructor args
-                ),
-                deployFactorySalt
-            );
-    }
+        string memory walletCoreVersion
+    )
+        internal
+        returns (
+            address storageAddr,
+            address ecdsaValidatorAddr,
+            address walletCoreAddr
+        )
+    {
+        // Deploy Storage
+        storageAddr = _deployIfNeeded(
+            deployFactory,
+            type(Storage).creationCode,
+            deployFactorySalt
+        );
 
-    function deployStorage(
-        DeployFactory deployFactory,
-        bytes32 deployFactorySalt
-    ) public returns (address payable) {
-        return
-            _deployIfNeeded(
-                deployFactory,
-                type(Storage).creationCode,
-                deployFactorySalt
-            );
-    }
+        // Deploy ECDSA Validator
+        ecdsaValidatorAddr = _deployIfNeeded(
+            deployFactory,
+            type(ECDSAValidator).creationCode,
+            deployFactorySalt
+        );
 
-    function deployEcdsaValidator(
-        DeployFactory deployFactory,
-        bytes32 deployFactorySalt
-    ) public returns (address payable) {
-        return
-            _deployIfNeeded(
-                deployFactory,
-                type(ECDSAValidator).creationCode,
-                deployFactorySalt
-            );
+        // Deploy Wallet Core
+        walletCoreAddr = _deployIfNeeded(
+            deployFactory,
+            abi.encodePacked(
+                type(WalletCore).creationCode,
+                abi.encode(storageAddr, walletCoreName, walletCoreVersion) // constructor args
+            ),
+            deployFactorySalt
+        );
     }
 
     function _deployIfNeeded(
         DeployFactory deployFactory,
         bytes memory bytecode,
         bytes32 salt
-    ) internal returns (address payable) {
+    ) internal returns (address) {
         address derivedAddress = Create2.computeAddress(
             salt,
             keccak256(bytecode),

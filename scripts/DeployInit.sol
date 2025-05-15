@@ -34,37 +34,17 @@ contract DeployInit is Script {
         address ecdsaValidator_;
         address walletCore_;
 
-        storage_ = vm.envOr("STORAGE_ADDRESS", address(0));
-        if (storage_ == address(0)) {
-            storage_ = DeployInitHelper.deployStorage(
+        (storage_, ecdsaValidator_, walletCore_) = DeployInitHelper
+            .deployContracts(
                 deployFactory,
-                deployFactorySalt
+                deployFactorySalt,
+                walletCoreName,
+                walletCoreVersion
             );
-        } else {
-            console.log("Skipped STORAGE_ADDRESS deployment...");
-        }
 
-        ecdsaValidator_ = vm.envOr("ECDSA_VALIDATOR_ADDRESS", address(0));
-        if (ecdsaValidator_ == address(0)) {
-            ecdsaValidator_ = DeployInitHelper.deployEcdsaValidator(
-                deployFactory,
-                deployFactorySalt
-            );
-        } else {
-            console.log("Skipped ECDSA_VALIDATOR_ADDRESS deployment...");
-        }
-
-        walletCore_ = DeployInitHelper.deployWalletCore(
-            deployFactory,
-            deployFactorySalt,
-            walletCoreName,
-            walletCoreVersion,
-            storage_
-        );
-
-        console.log("WalletCore address: %s", address(walletCore_));
-        console.log("Storage address: %s", address(storage_));
-        console.log("ECDSAValidator address: %s", address(ecdsaValidator_));
+        console.log("WalletCore address: %s", walletCore_);
+        console.log("Storage address: %s", storage_);
+        console.log("ECDSAValidator address: %s", ecdsaValidator_);
         console.log("Completed DeployInit script");
         vm.stopBroadcast();
     }
