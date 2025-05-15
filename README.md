@@ -2,6 +2,16 @@
 
 A modular and secure implementation of EIP-7702 smart contract wallet with multiple execution types and advanced security features.
 
+## Prerequisites
+
+1. Make sure you have Node.js installed
+2. Run `npm install` in the project root to install dependencies
+3. Install Foundry (which provides the `forge` command) by running:
+
+   ```bash
+   curl -L https://foundry.paradigm.xyz | bash
+   ```
+
 ## Overview
 
 This implementation provides a flexible smart contract wallet that supports:
