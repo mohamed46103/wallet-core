@@ -34,24 +34,20 @@ contract Base is Test {
         deployFactory = new DeployFactory();
         bytes32 deployFactorySalt = vm.envBytes32("DEPLOY_FACTORY_SALT");
 
-        _storageImpl = IStorage(
-            DeployInitHelper.deployStorage(deployFactory, deployFactorySalt)
-        );
-        _ecdsaValidatorImpl = ECDSAValidator(
-            DeployInitHelper.deployEcdsaValidator(
-                deployFactory,
-                deployFactorySalt
-            )
-        );
-        _walletCore = WalletCore(
-            DeployInitHelper.deployWalletCore(
+        (
+            address _storageAddr,
+            address _ecdsaValidatorAddr,
+            address _walletCoreAddr
+        ) = DeployInitHelper.deployContracts(
                 deployFactory,
                 deployFactorySalt,
                 NAME,
-                VERSION,
-                address(_storageImpl)
-            )
-        );
+                VERSION
+            );
+
+        _storageImpl = IStorage(_storageAddr);
+        _ecdsaValidatorImpl = ECDSAValidator(_ecdsaValidatorAddr);
+        _walletCore = WalletCore(payable(_walletCoreAddr));
 
         _setCodeToEOA(address(_walletCore), _alice);
 
