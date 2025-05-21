@@ -5,6 +5,8 @@ import "./Base.t.sol";
 import "src/lib/Errors.sol";
 
 contract StorageTest is Base {
+    event StorageInitialized();
+
     function setUp() public override {
         super.setUp();
     }
@@ -27,9 +29,10 @@ contract StorageTest is Base {
         );
     }
 
-    function test_initialize_reverts_when_called_twice() public {
+    function test_initialize_emits_event_when_called_twice() public {
         vm.prank(_alice);
-        vm.expectCall(_alice, abi.encodeCall(IWalletCore.initialize, ()));
+        vm.expectEmit();
+        emit StorageInitialized();
         IWalletCore(_alice).initialize();
     }
 
