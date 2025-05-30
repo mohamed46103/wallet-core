@@ -12,10 +12,19 @@ contract FactoryTest is Base {
 
     function test_double_deploy() external {
         bytes32 deployFactorySalt = vm.envBytes32("DEPLOY_FACTORY_SALT");
-        address payable storageAddr = DeployInitHelper.deployStorage(
-            deployFactory,
-            deployFactorySalt
-        );
-        assertEq(address(storageAddr), address(_storageImpl));
+        (
+            address _storageAddr,
+            address _ecdsaValidatorAddr,
+            address _walletCoreAddr
+        ) = DeployInitHelper.deployContracts(
+                deployFactory,
+                deployFactorySalt,
+                NAME,
+                VERSION
+            );
+
+        assertEq(address(_storageAddr), address(_storageImpl));
+        assertEq(address(_ecdsaValidatorAddr), address(_ecdsaValidatorImpl));
+        assertEq(address(_walletCoreAddr), address(_walletCore));
     }
 }
